@@ -1,3 +1,7 @@
+
+#ifndef UTHREAD_CPP
+#define UTHREAD_CPP
+
 #include "uthread.h"
 
 // implementation of the resume func
@@ -45,3 +49,52 @@ void uthread_body(schedule_t *ps) {
         ps->running_thread = -1;
     }
 }
+
+// implementation of the create func
+int uthread_create(schedule_t &schedule, Fun func, void *arg) {
+    int id = 0;
+    for (id = 0; id < schedule.max_index; id++) {
+        if (schedule.threads[id].state == FREE) {
+            break;
+        }
+    }
+
+    if (id == schedule.max_index) {
+        schedule.max_index++;
+    }
+
+    uthread_t *t = &(schedule.threads[id]);
+
+    t->state = RUNNABLE;
+    t->func = func;
+    t->arg = arg;
+
+    getcontext(&(t->ctx));
+
+    t->ctx.uc_stack.ss_sp = t->stack;
+    t->ctx.uc_stack.ss_size = DEFAULT_STACK_SIZE;
+    t->ctx.uc_stack.ss_flags = 0;
+    t->ctx.uc_link = &(schedule.main);
+    schedule.running_thread = id;
+
+    makecontext(&(t->ctx), (void (*)(void))(uthread_body), 1, &schedule);
+    swapcontext(&(schedule.main), &(t->ctx));
+
+    return id;
+}
+
+// implementation of the finish func
+int schedule_finished(const schedule_t &schedule) {
+    if (schedule.running_thread != -1) {
+        return 0;
+    } else {
+        for (int i = 0; i < schedule.max_index; i++) {
+            if (schedule.threads[i].state != FREE) {
+                return 0;
+            }
+        }
+    }
+    return 1;
+}
+
+#endif
