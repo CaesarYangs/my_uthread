@@ -4,6 +4,17 @@
 
 #include "uthread.h"
 
+void uthread_body(schedule_t *ps) {
+    int id = ps->running_thread;
+
+    if (id != -1) {
+        uthread_t *t = &(ps->threads[id]);
+        t->func(t->arg);
+        t->state = FREE;
+        ps->running_thread = -1;
+    }
+}
+
 // implementation of the resume func
 void uthread_resume(schedule_t &schedule, int id) {
     if (id < 0 || id >= schedule.max_index) {
@@ -36,17 +47,6 @@ void uthread_yield(schedule_t &schedule) {
         schedule.running_thread = -1;
 
         swapcontext(&(t->ctx), &(schedule.main));
-    }
-}
-
-void uthread_body(schedule_t *ps) {
-    int id = ps->running_thread;
-
-    if (id != -1) {
-        uthread_t *t = &(ps->threads[id]);
-        t->func(t->arg);
-        t->state = FREE;
-        ps->running_thread = -1;
     }
 }
 

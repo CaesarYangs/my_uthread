@@ -1,4 +1,4 @@
-#include "uthread.h"
+#include "uthread.cpp"
 #include <stdio.h>
 
 void func2(void *arg) {
