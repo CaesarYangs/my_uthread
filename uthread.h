@@ -10,6 +10,7 @@
 #define DEFAULT_STACK_SIZE (1024 * 128)
 #define MAX_UTHREAD_SIZE 1024
 
+// 四种状态：可用，可运行，正在运行，挂起
 enum ThreadState { FREE, RUNNABLE, RUNNING, SUSPEND };
 
 typedef void (*Fun)(void *arg);

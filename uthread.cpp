@@ -39,7 +39,8 @@ void uthread_resume(schedule_t &schedule, int id) {
     }
 }
 
-// implementation of the yield func
+//  implementation of the yield func
+//  让渡执行权
 void uthread_yield(schedule_t &schedule) {
     if (schedule.running_thread != -1) {
         uthread_t *t = &(schedule.threads[schedule.running_thread]);
