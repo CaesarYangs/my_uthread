@@ -16,6 +16,7 @@ void uthread_body(schedule_t *ps) {
 }
 
 // implementation of the resume func
+// 将传递的协程切换为运行态 恢复上下文
 void uthread_resume(schedule_t &schedule, int id) {
     if (id < 0 || id >= schedule.max_index) {
         return;

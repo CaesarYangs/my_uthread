@@ -51,6 +51,7 @@
 
 #include "lc.h"
 
+// 堆栈仅有2字节
 struct pt {
     lc_t lc;
 };
